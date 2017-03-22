@@ -1,9 +1,8 @@
 from sklearn.base import BaseEstimator
-from sklearn.ensemble import RandomForestClassifier
 from sklearn import tree
-from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
+from data_manager import DataManager # Classe du binôme 1
+from preprocessor import Preprocessor # Classe du binöme 2
+
 import pickle
 
 
@@ -12,7 +11,7 @@ class Classifier(BaseEstimator):
         pass
 
     def fit(self, X, y):
-        self.clf =  KNeighborsClassifier()
+        self.clf =  DecisionTreeClassifier()
         self.clf.fit(X, y)
 
     def predict(self, X):
