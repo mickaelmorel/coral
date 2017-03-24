@@ -1,7 +1,5 @@
 from sklearn.base import BaseEstimator
 from sklearn import tree
-from data_manager import DataManager # Classe du binôme 1
-from preprocessor import Preprocessor # Classe du binöme 2
 
 import pickle
 
