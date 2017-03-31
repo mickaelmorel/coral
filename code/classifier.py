@@ -13,9 +13,6 @@ def ebar(score, sample_num):
 return np.sqrt(1.*score*(1-score)/sample_num)
 
 class BasicClassifier(BaseEstimator):
-    '''BasicClassifier: modify this class to create a simple classifier of
-    your choice. This could be your own algorithm, of one for the scikit-learn
-    classfiers, with a given choice of hyper-parameters.'''
     def __init__(self):
         '''This method initializes the parameters. This is where you could replace
         RandomForestClassifier by something else or provide arguments, e.g.
@@ -23,16 +20,13 @@ class BasicClassifier(BaseEstimator):
         self.clf = RandomForestClassifier()
 
     def fit(self, X, y):
-        ''' This is the training method: parameters are adjusted with training data.'''
         return self.clf.fit(X, y)
 
     def predict(self, X):
-        ''' This is called to make predictions on test data. Predicted classes are output.'''
         return self.clf.predict(X)
 
     def predict_proba(self, X):
-        ''' Similar to predict, but probabilities of belonging to a class are output.'''
-        return self.clf.predict_proba(X) # The classes are in the order of the labels returned by get_classes
+        return self.clf.predict_proba(X)
         
     def get_classes(self):
         return self.clf.classes_
@@ -43,3 +37,30 @@ class BasicClassifier(BaseEstimator):
     def load(self, path="./"):
         self = pickle.load(open(path + '_model.pickle'))
 return self
+
+class Classifier(BaseEstimator):
+    def __init__(self):
+        fancy_classifier = Pipeline([
+                ('preprocessing', Preprocessor()),
+                ('classification', BaggingClassifier(base_estimator=RandomForestClassifier()))
+                ])
+        self.clf = VotingClassifier(estimators=[
+                ('basic', BasicClassifier()), 
+                ('fancy', fancy_classifier)], 
+                voting='soft')   
+        
+    def fit(self, X, y):
+        return self.clf.fit(X, y)
+
+    def predict(self, X):
+        return self.clf.predict(X)
+
+    def predict_proba(self, X):
+        return self.clf.predict_proba(X) # The classes are in the order of the labels returned by get_classes
+        
+    def save(self, path="./"):
+        pickle.dump(self, open(path + '_model.pickle', "w"))
+
+    def load(self, path="./"):
+        self = pickle.load(open(path + '_model.pickle'))
+        return self
